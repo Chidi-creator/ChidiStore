@@ -8,7 +8,8 @@ const {
   deleteProduct,
   fetchProducts,
   fetchProductsById,
-  fetchAllProducts
+  fetchAllProducts,
+  addProductReview
 } = require("../controllers/productController");
 
 const {
@@ -23,6 +24,9 @@ router.route("/")
 
 router.route('/allproducts')
         .get(fetchAllProducts)
+
+router.route('/:id/reviews')
+      .post(authenticate, authorizeAdmin, addProductReview )
 
 router
   .route("/:id")

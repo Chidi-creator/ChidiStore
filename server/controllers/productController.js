@@ -119,11 +119,27 @@ try{
 }
 }
 
+const addProductReview = async (req, res) =>{
+  try{
+const {rating, comment} = req.body
+const product = await Product.findById(req.params.id)
+
+if (product){
+  const alreadyReviewed = product.reviews.find(r => r.user.toString() === req.us)
+}
+
+  }catch(err){
+    res.status(500).json({message: err.messge})
+  }
+}
+
 module.exports = {
   addProduct,
   updateProductDetails,
   deleteProduct,
   fetchProducts,
   fetchProductsById,
-  fetchAllProducts
+  fetchAllProducts,
+  addProductReview
+
 };
