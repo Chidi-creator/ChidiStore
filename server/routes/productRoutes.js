@@ -6,7 +6,9 @@ const {
   addProduct,
   updateProductDetails,
   deleteProduct,
-  fetchProducts
+  fetchProducts,
+  fetchProductsById
+  
 } = require("../controllers/productController");
 
 const {
@@ -21,6 +23,7 @@ router.route("/")
 
 router
   .route("/:id")
+  .get(fetchProductsById)
   .put(authenticate, authorizeAdmin, formidable(), updateProductDetails)
   .delete(authenticate, authorizeAdmin, deleteProduct)
 

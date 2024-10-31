@@ -54,54 +54,65 @@ const updateProductDetails = async (req, res) => {
       { new: true }
     );
 
-    if (!product) return res.status(404).json({message: "Product not found"})
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
-      res.json(product)
+    res.json(product);
 
-
-
-    await product.save()
+    await product.save();
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "internal server error" });
   }
 };
 
-const deleteProduct = async (req, res) =>{
-  try{
+const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
 
-    const product = await Product.findByIdAndDelete(req.params.id)
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
-  if (!product) return res.status(404).json({message: "Product not found"})
-
-    res.json(product)
-
-  }catch(err){
-    res.status(500).json({message: err.message})
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
+};
 
-}
+const fetchProducts = async (req, res) => {
+  try {
+    const pageSize = 6;
+    const keyword = req.query.keyword
+      ? { name: { $regex: req.query.keyword, $options: "i" } }
+      : {};
 
-const fetchProducts  = async (req, res) =>{
-try{
-  const pageSize = 6;
-  const keyword = req.query.keyword
-    ? { name: { $regex: req.query.keyword, $options: "i" } }
-    : {};
+    const count = await Product.countDocuments({ ...keyword });
+    const products = await Product.find({ ...keyword }).limit(pageSize);
 
-  const count = await Product.countDocuments({ ...keyword });
-  const products = await Product.find({ ...keyword }).limit(pageSize);
+    res.json({
+      products,
+      page: 1,
+      pages: Math.ceil(count / pageSize),
+      hasMore: false,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-  res.json({
-    products,
-    page: 1,
-    pages: Math.ceil(count / pageSize),
-    hasMore: false,
-  });
-}catch(err){
-  res.status(500).json({message: err.message})
-}
-}
+const fetchProductsById = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if(!product) return res.status(404).json({message: "Product not found"})
 
+      res.status(200).json(product)
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-module.exports = { addProduct, updateProductDetails, deleteProduct, fetchProducts };
+module.exports = {
+  addProduct,
+  updateProductDetails,
+  deleteProduct,
+  fetchProducts,
+  fetchProductsById,
+};
