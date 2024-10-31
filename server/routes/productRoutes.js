@@ -7,8 +7,8 @@ const {
   updateProductDetails,
   deleteProduct,
   fetchProducts,
-  fetchProductsById
-  
+  fetchProductsById,
+  fetchAllProducts
 } = require("../controllers/productController");
 
 const {
@@ -20,6 +20,9 @@ const checkId = require("../middlewares/checkId");
 router.route("/")
 .get(fetchProducts)
 .post(authenticate, authorizeAdmin, formidable(), addProduct);
+
+router.route('/allproducts')
+        .get(fetchAllProducts)
 
 router
   .route("/:id")
